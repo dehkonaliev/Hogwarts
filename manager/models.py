@@ -5,7 +5,7 @@ class Group(models.Model):
     name = models.CharField(max_length=100)
     manager = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': 'MANAGER'})
     teacher = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': 'TEACHER'}, related_name='group_teacher')
-    students = models.ManyToManyField(CustomUser,  limit_choices_to={'role': 'TEACHER'}, related_name='enrolled_groups')
+    students = models.ManyToManyField(CustomUser,  limit_choices_to={'role': 'STUDENT'}, related_name='enrolled_groups')
     
     def __str__(self):
         return self.name
