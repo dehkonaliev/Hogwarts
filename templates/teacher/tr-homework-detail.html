@@ -1,0 +1,103 @@
+{% extends 'tr-base.html' %}
+
+{% block title %}{{ homework.title }}{% endblock %}
+
+{% block breadcrumb %}
+<p class="text-xs text-muted mb-0.5">Homework</p>
+{% endblock %}
+
+{% block page_title %}{{ homework.title }}{% endblock %}
+
+{% block content %}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Left column: attachments + submissions -->
+    <div class="lg:col-span-2 space-y-6">
+
+        {% if homework.image or homework.file %}
+        <section class="rounded-xl border border-line bg-surface p-5">
+            <h2 class="font-display font-bold text-white text-base mb-4">Attachment</h2>
+
+            {% if homework.image %}
+            <div class="rounded-lg overflow-hidden border border-line mb-4">
+                <img src="{{ homework.image.url }}" alt="{{ homework.title }}" class="w-full max-h-96 object-cover">
+            </div>
+            {% endif %}
+
+            {% if homework.file %}
+            <a href="{{ homework.file.url }}"
+               class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-lg bg-raised border border-line hover:border-accent-dim text-sm text-slate-200 hover:text-white transition">
+                <svg class="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/>
+                </svg>
+                Download file
+            </a>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <!-- Submissions -->
+        <section class="rounded-xl border border-line bg-surface overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-line">
+                <h2 class="font-display font-bold text-white text-base">Submissions</h2>
+                <span class="text-xs font-mono text-muted">{{ students|length }}</span>
+            </div>
+
+            {% if students %}
+            <ul class="divide-y divide-line/70">
+                {% for student in students %}
+                <li class="flex items-center justify-between gap-4 px-5 py-3.5">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <div class="w-7 h-7 shrink-0 rounded-full bg-gradient-to-br from-accent to-gold flex items-center justify-center text-[11px] font-display font-bold text-white">
+                            {{ student.first_name|first|upper }}{{ student.last_name|first|upper }}
+                        </div>
+                        <span class="text-slate-200 font-medium truncate">{{ student.first_name }} {{ student.last_name }}</span>
+                    </div>
+
+                    {% if student.homework_submission %}
+                    <a href="{% url 'tr-submission' student.homework_submission.0.pk %}"
+                       class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-medium hover:bg-emerald-500/20 transition">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        Done
+                    </a>
+                    {% else %}
+                    <span class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/10 text-red-400 text-xs font-medium">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                        Missing
+                    </span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="px-5 py-8 text-sm text-muted text-center">No students assigned to this homework.</p>
+            {% endif %}
+        </section>
+    </div>
+
+    <!-- Right column: danger zone -->
+    <div class="lg:col-span-1">
+        <section class="rounded-xl border border-red-500/20 bg-red-500/5 p-5">
+            <h2 class="font-display font-bold text-white text-base mb-1">Danger zone</h2>
+            <p class="text-xs text-muted mb-4">Deleting this homework cannot be undone.</p>
+
+            <form method="POST" onsubmit="return confirm('Delete this homework? This action cannot be undone.');">
+                {% csrf_token %}
+                <button
+                    type="submit"
+                    name="delete-homework"
+                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 hover:text-red-300 text-sm font-medium transition">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    </svg>
+                    Delete homework
+                </button>
+            </form>
+        </section>
+    </div>
+
+</div>
+
+{% endblock %}

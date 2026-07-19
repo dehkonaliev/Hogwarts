@@ -1,37 +1,142 @@
 {% extends 'tr-base.html' %}
 
+{% block title %}{{ group.name }}{% endblock %}
+
+{% block breadcrumb %}
+<p class="text-xs text-muted mb-0.5">
+    <a href="{% url 'mg-group-list' %}" class="hover:text-slate-300 transition">Guruhlar</a>
+    <span class="mx-1">/</span>{{ group.name }}
+</p>
+{% endblock %}
+
+{% block page_title %}{{ group.name }}{% endblock %}
+
 {% block content %}
-<h1>Group detail page</h1>
-{{group.name}}
-{{group.students.count}}
 
-<form method="POST" class="space-y-3">
-    {% csrf_token %}
-    <input type="text" name="title" placeholder="Lesson Title ..." minlength="2">
-    <button type="submit" name="lesson">Add Lesson</button>
+<div class="flex flex-wrap items-center gap-3 mb-8">
+    <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-line text-sm text-slate-300">
+        <svg class="w-4 h-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 5 18.5V20"/><circle cx="9.5" cy="8.5" r="3.5"/>
+            <path d="M19 20v-1.5a3.5 3.5 0 0 0-2.5-3.36"/><path d="M14.5 5.13a3.5 3.5 0 0 1 0 6.74"/>
+        </svg>
+        <span class="font-mono text-slate-200">{{ group.students.count }}</span> students
+    </span>
+</div>
 
-</form>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-<h1>Students</h1>
-{% for student in students %}
-<h1>
-    {{student.first_name}}
-    {{student.last_name}}
-    {{student.email}}
-    {{student.phone_num}}
-</h1>
-    
-{% endfor %}
+    <!-- Left column: students + lessons -->
+    <div class="lg:col-span-2 space-y-6">
 
-<h1>Lessons</h1>
-{% for lesson in lessons %}
-<h1>
-    <a href="{% url 'tr-lesson-detail' lesson.pk %}">
-        {{lesson.title}}
-    </a>
-    {{lesson.date}}
-</h1>
-    
-{% endfor %}
+        <!-- Students -->
+        <section class="rounded-xl border border-line bg-surface overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-line">
+                <h2 class="font-display font-bold text-white ">Students</h2>
+                <span class="text-xs font-mono text-muted">{{ group.students.count }}</span>
+            </div>
+
+            {% if students %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-left text-[11px] uppercase tracking-wide text-muted/70 border-b border-line">
+                            <th class="px-5 py-2.5 font-medium">Name</th>
+                            <th class="px-5 py-2.5 font-medium">XP</th>
+                            <th class="px-5 py-2.5 font-medium">Coins</th>
+                            <th class="px-5 py-2.5 font-medium">Email</th>
+                            <th class="px-5 py-2.5 font-medium">Phone Number</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/70">
+                        {% for student in students %}
+                        <tr class="hover:bg-raised/50 transition">
+                            <td class="px-5 py-3">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 shrink-0 rounded-full bg-gradient-to-br from-accent to-gold flex items-center justify-center text-[11px] font-display font-bold text-white">
+                                        {{ student.first_name|first|upper }}{{ student.last_name|first|upper }}
+                                    </div>
+                                    <span class="text-slate-200 font-medium">{{ student.first_name }} {{ student.last_name }}</span>
+                                </div>
+                            </td>
+                            <td class="px-5 py-3 text-slate-400">{{ student.student_info.xp }}</td>
+                            <td class="px-5 py-3 text-slate-400 font-mono text-[13px]">{{ student.student_info.coins }}</td>
+                            <td class="px-5 py-3 text-slate-400">{{ student.email }}</td>
+                            <td class="px-5 py-3 text-slate-400 font-mono text-[13px]">{{ student.phone_num }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="px-5 py-8 text-sm text-muted text-center">Here is no students yet ... </p>
+            {% endif %}
+        </section>
+
+        <!-- Lessons -->
+        <section class="rounded-xl border border-line bg-surface overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-line">
+                <h2 class="font-display font-bold text-white">Lessons</h2>
+                <span class="text-xs font-mono text-muted">{{ lessons|length }}</span>
+            </div>
+
+            {% if lessons %}
+            <ul class="divide-y divide-line/70">
+                {% for lesson in lessons %}
+                <li>
+                    <a href="{% url 'tr-lesson-detail' lesson.pk %}"
+                       class="flex items-center justify-between gap-4 px-5 py-3.5 hover:bg-raised/50 transition group">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-8 h-8 shrink-0 rounded-lg bg-raised flex items-center justify-center">
+                                <svg class="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                </svg>
+                            </div>
+                            <span class="text-slate-200 font-medium truncate group-hover:text-white transition">{{ lesson.title }}</span>
+                        </div>
+                        <span class="shrink-0 text-xs font-mono text-muted">{{ lesson.date }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="px-5 py-8 text-sm text-muted text-center">No lessons yet</p>
+            {% endif %}
+        </section>
+    </div>
+
+    <!-- Right column: add lesson -->
+    <div class="lg:col-span-1">
+        <section class="rounded-xl border border-line bg-surface p-5 sticky top-0">
+            <h2 class="font-display font-bold text-white mb-1">Add new lesson</h2>
+            <p class="text-xs text-muted mb-4">Write a title and add to a group</p>
+
+            <form method="POST" class="space-y-3">
+                {% csrf_token %}
+                <div>
+                    <label for="lesson-title" class="block text-xs font-medium text-muted mb-1.5">Lesson name</label>
+                    <input
+                        id="lesson-title"
+                        type="text"
+                        name="title"
+                        placeholder="Masalan: 3-dars — O'tmish zamon"
+                        minlength="2"
+                        required
+                        class="w-full px-3.5 py-2.5 rounded-lg bg-raised border border-line text-sm text-slate-200 placeholder:text-muted/60
+                               focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent-dim transition">
+                </div>
+
+                <button
+                    type="submit"
+                    name="lesson"
+                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-accent hover:bg-accent-dim text-white text-sm font-medium transition">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                    Add lesson
+                </button>
+            </form>
+        </section>
+    </div>
+
+</div>
 
 {% endblock %}
