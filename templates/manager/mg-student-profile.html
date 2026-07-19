@@ -43,6 +43,13 @@
         <button type="submit" name="payment">Replenish</button>
     </form>
 
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="number" name="coins" step="1" min="1" max="100">
+        <button type="submit" name="reward">Reward</button>
+    </form>
+
     <img src="{{student.profile_img.url}}" alt="">
     <h2>{{student.first_name}}</h2>
     <h2>{{student.last_name}}</h2>

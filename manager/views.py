@@ -94,9 +94,18 @@ class StudentProfileView(View):
         payment = request.POST.get('amount', 0)
         student_info = StudentInfo.objects.filter(student=user).first()
         
+        
         if payment and 'payment' in request.POST:
             payment = Decimal(payment)
             student_info.balance = student_info.balance + payment
+            student_info.save()
+            return redirect('mg-student-profile', user.username)
+        
+        reward = request.POST.get('coins')
+        
+        if reward and 'reward' in request.POST:
+            reward = int(reward)
+            student_info.coins = student_info.coins + reward
             student_info.save()
             return redirect('mg-student-profile', user.username)
             
