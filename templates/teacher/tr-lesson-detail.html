@@ -1,0 +1,32 @@
+{% extends 'tr-base.html' %}
+
+{% block content %}
+<h1>Lesson detail</h1>
+
+<h2>{{lesson.group.name}}</h2>
+{{lesson.title}}
+
+<h1>Homework</h1>
+{% for homework in homeworks %}
+    <h2>{{homework.title}}</h2>
+    {% if homework.image %}
+    <img src="{{homework.image.url}}" alt="">
+    {% endif %}
+    {% if homework.file %}
+    <a href="{{ homework.file.url }}" download>Download File</a>
+    {% endif %}
+{% endfor %}
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit" name="add-homework">Add Homework</button>
+</form>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" name="delete-lesson">Delete lesson</button>
+</form>
+
+
+{% endblock %}

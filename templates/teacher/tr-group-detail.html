@@ -23,4 +23,15 @@
     
 {% endfor %}
 
+<h1>Lessons</h1>
+{% for lesson in lessons %}
+<h1>
+    <a href="{% url 'tr-lesson-detail' lesson.pk %}">
+        {{lesson.title}}
+    </a>
+    {{lesson.date}}
+</h1>
+    
+{% endfor %}
+
 {% endblock %}

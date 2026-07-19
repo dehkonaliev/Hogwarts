@@ -1,7 +1,7 @@
 from django import forms
 from .models import Lesson, Homework
 
-class LessonForm(forms.ModelForm):
+class HomeworkForm(forms.ModelForm):
     class Meta:
-        model = Lesson
-        fields = '__all__'
+        model = Homework
+        fields = ['title', 'file', 'image']
