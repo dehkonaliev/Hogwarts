@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import LoginForm, SignUpForm
+from .forms import LoginForm, SignUpForm, UpdateMeForm
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout
@@ -55,17 +55,26 @@ class SignUpView(View):
         return render(request, 'utils/signup.html', {'form': form})
     
 
-class UpdateMeView(View):
+class UpdateMeView(LoginRequiredMixin, View):
     def get(self, request):
-        form = SignUpForm(instance=request.user)
+        form = UpdateMeForm(instance=request.user)
         return render(request, 'utils/update-me.html', {'form': form})
 
     def post(self, request):
-        form = SignUpForm(request.POST, request.FILES, instance=request.user)
+        form = UpdateMeForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('profile')
+            return redirect('my-profile')
         return render(request, 'utils/update-me.html', {'form': form})
+    
+
+@login_required
+def my_profile_view(request):
+    context = {
+        'user': request.user
+    }
+    
+    return render(request, 'manager/my-profile.html', context)
                 
         
             

@@ -1,6 +1,14 @@
+{% extends 'mg-base.html' %}
+
+
+{% block content %}
 <h1>Update Profile</h1>
 
 <form method="POST">
     {% csrf_token %}
     {{form.as_p}}
+    <a href="{% url 'my-profile' %}">Cancel</a>
+    <button type="submit">Save</button>
 </form>
+
+{% endblock %}

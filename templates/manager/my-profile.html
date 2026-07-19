@@ -1,0 +1,15 @@
+{% extends 'mg-base.html' %}
+
+
+{% block content %}
+<h1>My Profile</h1>
+<a href="{% url 'update-me' %}">Update Profile</a>
+
+<img src="{{user.profile_img.url}}" alt="">
+{{user.username}}
+{{user.first_name}}
+{{user.last_name}}
+{{user.phone_num}}
+{{user.email}}
+
+{% endblock %}
