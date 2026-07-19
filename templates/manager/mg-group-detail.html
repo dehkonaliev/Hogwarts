@@ -1,45 +1,74 @@
 {% extends 'mg-base.html' %}
 
 {% block content %}
-    <h1>Group Detail Page</h1>
-    <h2>
-        {{group.name}}
-    </h2>
-    {% if group.teacher %}
-    <h2>
-        <a href="{% url 'mg-teacher-profile' group.teacher.username %}">
-            {{group.teacher}}
-        </a>
-    </h2>
-    
-    {% else %}
-        <h2>Group has no teacher</h2>
-    {% endif %}
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-white mb-2">{{ group.name }}</h1>
+    <p class="text-slate-400">Group management and student enrollment details.</p>
+</div>
 
-    <form method="POST">
-        {% csrf_token %}
-        <select name="teacher" class="form-select">
-            <option value="" disabled selected>Select a teacher...</option>
-            {% for teacher in teachers %}
-                <option value="{{ teacher.id }}">{{ teacher.first_name }} {{teacher.last_name}}</option>
-            {% empty %}
-                <option disabled>No teachers ...</option>
-            {% endfor %}
-        </select>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Group Info & Actions -->
+    <div class="lg:col-span-1 space-y-6">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+            <h3 class="font-bold text-white mb-4">Assigned Teacher</h3>
+            {% if group.teacher %}
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400 font-bold">
+                        {{ group.teacher.first_name|slice:":1" }}{{ group.teacher.last_name|slice:":1" }}
+                    </div>
+                    <a href="{% url 'mg-teacher-profile' group.teacher.username %}" class="text-blue-400 hover:text-blue-300 font-medium">
+                        {{ group.teacher.first_name }} {{ group.teacher.last_name }}
+                    </a>
+                </div>
+            {% else %}
+                <p class="text-slate-500 italic mb-6">No teacher assigned.</p>
+            {% endif %}
 
-        <button type="submit">Change teacher</button>
-    </form>
-    <h2>Group Students</h2>
-    {% for student in students %}
-        <h3>
-            <a href="{% url 'mg-student-profile' student.username %}">
-                {{student.username}}
-                {{student.first_name}}
-                {{student.last_name}}
-                {{student.phone_num}}
+            <form method="POST" class="space-y-3">
+                {% csrf_token %}
+                <select name="teacher" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-slate-200">
+                    <option value="" disabled selected>Change teacher...</option>
+                    {% for teacher in teachers %}
+                        <option value="{{ teacher.id }}">{{ teacher.first_name }} {{ teacher.last_name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded text-sm font-semibold">Update Teacher</button>
+            </form>
+        </div>
+    </div>
 
-            </a>
-        </h3>
-        
-    {% endfor %}
+    <!-- Students Table -->
+    <div class="lg:col-span-2 bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-700">
+            <h3 class="font-bold text-white">Enrolled Students</h3>
+        </div>
+        <table class="w-full text-left text-sm text-slate-300">
+            <thead class="bg-slate-900 text-slate-400 uppercase text-xs font-semibold">
+                <tr>
+                    <th class="px-6 py-4">Student</th>
+                    <th class="px-6 py-4">Phone</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700">
+                {% for student in students %}
+                <tr class="hover:bg-slate-750 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="font-medium text-white">{{ student.first_name }} {{ student.last_name }}</div>
+                        <div class="text-slate-500 text-xs">@{{ student.username }}</div>
+                    </td>
+                    <td class="px-6 py-4">{{ student.phone_num }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="{% url 'mg-student-profile' student.username %}" class="text-indigo-400 hover:text-indigo-300">View Profile</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="py-10 text-center text-slate-500">No students enrolled in this group.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

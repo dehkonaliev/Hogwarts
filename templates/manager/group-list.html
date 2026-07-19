@@ -1,39 +1,77 @@
-
 {% extends 'mg-base.html' %}
 
+{% block page_title %}Groups{% endblock %}
+
 {% block content %}
-<h1>Groups</h1>
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-white mb-2">Groups</h1>
+    <p class="text-slate-400">Manage your groups, assign teachers, and create new sessions.</p>
+</div>
 
-<h3>Search Groups</h3>
-<form method="GET">
-    <input type="text" name="group-name" placeholder="Group name..." required="False">
-    {{form.teacher}}
-    <button type="submit" name="action" value="search">Search</button>
-</form>
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <!-- Sidebar: Search & Create -->
+    <div class="lg:col-span-1 space-y-6">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+            <h3 class="font-bold text-white mb-4">Search Groups</h3>
+            <form method="GET" class="space-y-3">
+                <input type="text" name="group-name" placeholder="Group name..." class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
+                <div class="text-slate-200 text-sm [&>select]:w-full [&>select]:bg-slate-900 [&>select]:border [&>select]:border-slate-700 [&>select]:rounded [&>select]:p-2 [&>select]:text-sm">
+                    {{ form.teacher }}
+                </div>
+                <button type="submit" name="action" value="search" class="w-full bg-slate-700 hover:bg-slate-600 text-white py-2 rounded text-sm font-semibold transition">Search</button>
+            </form>
+        </div>
 
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+            <h3 class="font-bold text-white mb-4">Create Group</h3>
+            <form method="POST" class="space-y-3">
+                {% csrf_token %}
+                <div class="text-slate-200 text-sm space-y-2 [&>p>label]:block [&>p>label]:text-xs [&>p>label]:text-slate-400 [&>p>label]:mb-1 [&>p>input]:w-full [&>p>input]:bg-slate-900 [&>p>input]:border [&>p>input]:border-slate-700 [&>p>input]:rounded [&>p>input]:p-2 [&>p>select]:w-full [&>p>select]:bg-slate-900 [&>p>select]:border [&>p>select]:border-slate-700 [&>p>select]:rounded [&>p>select]:p-2">
+                    {{ form.as_p }}
+                </div>
+                <button type="submit" name="action" value="create" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded text-sm font-semibold transition">Create Group</button>
+            </form>
+        </div>
+    </div>
 
-<h3>Create Group</h3>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" name="action" value="create">Create</button>
-</form>
-
-<hr>
-
-{% for group in groups %}
-    <a href="{% url 'mg-group-detail' group.pk %}">
-        <h2>{{group.name}}</h2>
-    </a>
-
-        {% if group.teacher %}
-            <a href="{% url 'mg-teacher-profile' group.teacher.username %}">
-                <h2>{{group.teacher}}</h2>
-            </a>
-        {% else %}
-            <h2>No teacher</h2>
-        {% endif %}
-{% endfor %}
-
+    <!-- Main Content: Groups Table -->
+    <div class="lg:col-span-3 bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-700">
+            <h3 class="font-bold text-white">All Groups</h3>
+        </div>
+        <table class="w-full text-left text-sm text-slate-300">
+            <thead class="bg-slate-900 text-slate-400 uppercase text-xs font-semibold">
+                <tr>
+                    <th class="px-6 py-4">Group Name</th>
+                    <th class="px-6 py-4">Students</th>
+                    <th class="px-6 py-4">Assigned Teacher</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700">
+                {% for group in groups %}
+                <tr class="hover:bg-slate-750 transition-colors">
+                    <td class="px-6 py-4 font-medium text-white">{{ group.name }}</td>
+                    <td class="px-6 py-4">{{ group.students.count }}</td>
+                    <td class="px-6 py-4">
+                        {% if group.teacher %}
+                            <a href="{% url 'mg-teacher-profile' group.teacher.username %}" class="text-blue-400 hover:text-blue-300">{{ group.teacher }}</a>
+                        {% else %}
+                            <span class="text-slate-500 italic">No teacher</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="{% url 'mg-group-detail' group.pk %}" class="text-indigo-400 hover:text-indigo-300">View Details</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="py-10 text-center text-slate-500">No groups found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}
 

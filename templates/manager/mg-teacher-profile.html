@@ -1,20 +1,65 @@
 {% extends 'mg-base.html' %}
 
 {% block content %}
-    <h1>Teacher profile</h1>
-    <img src="{{teacher.profile_img.url}}" alt="">
-    <h2>{{teacher.first_name}}</h2>
-    <h2>{{teacher.last_name}}</h2>
-    <h2>{{teacher.email}}</h2>
-    <h2>{{teacher.phone_num}}</h2>
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-white mb-2">Teacher Profile</h1>
+    <p class="text-slate-400">Detailed information and group assignments for {{ teacher.first_name }} {{ teacher.last_name }}.</p>
+</div>
 
-    <h1>Groups</h1>
-    {% for group in groups %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Profile Card -->
+    <div class="lg:col-span-1 bg-slate-800 border border-slate-700 rounded-xl p-6 flex flex-col items-center text-center">
+        <div class="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-slate-700 bg-slate-900">
+            {% if teacher.profile_img %}
+                <img src="{{ teacher.profile_img.url }}" alt="{{ teacher.first_name }}" class="w-full h-full object-cover">
+            {% else %}
+                <div class="w-full h-full flex items-center justify-center bg-blue-600/20 text-blue-400 text-4xl font-bold">
+                    {{ teacher.first_name|slice:":1" }}{{ teacher.last_name|slice:":1" }}
+                </div>
+            {% endif %}
+        </div>
+        <h2 class="text-xl font-bold text-white mb-1">{{ teacher.first_name }} {{ teacher.last_name }}</h2>
+        <p class="text-slate-400 mb-6">{{ teacher.email }}</p>
         
-        <h2>
-            <a href="{% url 'mg-group-detail' group.pk %}">
-                {{group.name}}
-            </a>
-        </h2>
-    {% endfor %}
+        <div class="w-full border-t border-slate-700 pt-4 text-left space-y-3">
+            <div>
+                <p class="text-xs text-slate-500 uppercase font-semibold">Phone Number</p>
+                <p class="text-slate-200">{{ teacher.phone_num }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Groups List -->
+    <div class="lg:col-span-2 bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-700">
+            <h2 class="font-bold text-white">Assigned Groups</h2>
+        </div>
+        <table class="w-full text-left text-sm text-slate-300">
+            <thead class="bg-slate-900 text-slate-400 uppercase text-xs font-semibold">
+                <tr>
+                    <th class="px-6 py-4">Group Name</th>
+                    <th class="px-6 py-4 text-center">Students Count</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700">
+                {% for group in groups %}
+                <tr class="hover:bg-slate-750 transition-colors">
+                    <td class="px-6 py-4 font-medium text-white">{{ group.name }}</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="bg-slate-700 text-slate-200 px-2 py-1 rounded text-xs">{{ group.students.count }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="{% url 'mg-group-detail' group.pk %}" class="text-blue-400 hover:text-blue-300">View Group</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="py-10 text-center text-slate-500">No groups assigned to this teacher.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

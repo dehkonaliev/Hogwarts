@@ -1,69 +1,114 @@
 {% extends 'mg-base.html' %}
 
 {% block content %}
-    <h1>Student profile</h1>
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-white mb-2">Student Profile</h1>
+    <p class="text-slate-400">Manage student information, balance, and group assignments.</p>
+</div>
 
-    <h2>Add to group</h2>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Left Column: Info & Stats -->
+    <div class="lg:col-span-1 space-y-6">
+        <!-- Profile Card -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 flex flex-col items-center text-center">
+            <div class="w-32 h-32 rounded-full overflow-hidden mb-4 border-4 border-slate-700 bg-slate-900">
+                {% if student.profile_img %}
+                    <img src="{{ student.profile_img.url }}" alt="{{ student.first_name }}" class="w-full h-full object-cover">
+                {% else %}
+                    <div class="w-full h-full flex items-center justify-center bg-indigo-600/20 text-indigo-400 text-4xl font-bold">
+                        {{ student.first_name|slice:":1" }}{{ student.last_name|slice:":1" }}
+                    </div>
+                {% endif %}
+            </div>
+            <h2 class="text-xl font-bold text-white">{{ student.first_name }} {{ student.last_name }}</h2>
+            <p class="text-slate-400 mb-6">{{ student.email }}</p>
+            <div class="w-full border-t border-slate-700 pt-4 text-left space-y-2">
+                <p class="text-xs text-slate-500 uppercase font-semibold">Phone Number</p>
+                <p class="text-slate-200">{{ student.phone_num }}</p>
+            </div>
+        </div>
 
-    <form method="POST">
-        {% csrf_token %}
+        <!-- Stats Card -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+            <h3 class="font-bold text-white mb-4">Account Status</h3>
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div class="bg-slate-900 p-3 rounded-lg">
+                    <p class="text-xs text-slate-500 uppercase">Balance</p>
+                    <p class="text-lg font-bold text-emerald-400">{{ student_info.balance }}</p>
+                </div>
+                <div class="bg-slate-900 p-3 rounded-lg">
+                    <p class="text-xs text-slate-500 uppercase">XP</p>
+                    <p class="text-lg font-bold text-blue-400">{{ student_info.xp }}</p>
+                </div>
+                <div class="bg-slate-900 p-3 rounded-lg">
+                    <p class="text-xs text-slate-500 uppercase">Coins</p>
+                    <p class="text-lg font-bold text-amber-400">{{ student_info.coins }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <select name="group" class="form-select">
-            <option value="" disabled selected>Select a group...</option>
-            {% for group in available_groups %}
-                <option value="{{ group.id }}">{{ group.name }}</option>
-            {% empty %}
-                <option disabled>No groups available</option>
-            {% endfor %}
-        </select>
+    <!-- Right Column: Management Actions & Groups -->
+    <div class="lg:col-span-2 space-y-6">
+        <!-- Actions Card -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+            <h3 class="font-bold text-white mb-4">Management Actions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <form method="POST" class="space-y-2">
+                    {% csrf_token %}
+                    <select name="group" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-slate-200">
+                        <option value="" disabled selected>Select group to add...</option>
+                        {% for group in available_groups %}<option value="{{ group.id }}">{{ group.name }}</option>{% endfor %}
+                    </select>
+                    <button name="add" type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded text-sm font-semibold">Add to Group</button>
+                </form>
 
-        <button name="add" type="submit">Add to this group</button>
-    </form>
-    
+                <form method="POST" class="space-y-2">
+                    {% csrf_token %}
+                    <select name="group" class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-slate-200">
+                        <option value="" disabled selected>Select group to remove...</option>
+                        {% for group in groups %}<option value="{{ group.id }}">{{ group.name }}</option>{% endfor %}
+                    </select>
+                    <button name="remove" type="submit" class="w-full bg-red-600/20 hover:bg-red-600/40 text-red-400 py-2 rounded text-sm font-semibold">Remove from Group</button>
+                </form>
 
-    <form method="POST">
-        {% csrf_token %}
+                <form method="POST" class="flex gap-2">
+                    {% csrf_token %}
+                    <input type="number" name="amount" placeholder="Amount" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
+                    <button type="submit" name="payment" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded text-sm font-semibold">Replenish</button>
+                </form>
 
-        <select name="group" class="form-select">
-            <option value="" disabled selected>Select a group...</option>
-            {% for group in groups %}
-                <option value="{{ group.id }}">{{ group.name }}</option>
-            {% empty %}
-                <option disabled>No joined groups</option>
-            {% endfor %}
-        </select>
+                <form method="POST" class="flex gap-2">
+                    {% csrf_token %}
+                    <input type="number" name="coins" placeholder="Coins" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm">
+                    <button type="submit" name="reward" class="bg-amber-600 hover:bg-amber-500 px-4 py-2 rounded text-sm font-semibold">Reward</button>
+                </form>
+            </div>
+            <form method="POST" class="mt-4">
+                {% csrf_token %}
+                <button type="submit" name="promote-to-teacher" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded text-sm font-semibold transition">Promote to Teacher</button>
+            </form>
+        </div>
 
-        <button name="remove" type="submit">Remove From this group</button>
-    </form>
-
-    <form method="POST">
-        {% csrf_token %}
-
-        <input type="number" name="amount" step="0.01" min="0" max="1000000">
-        <button type="submit" name="payment">Replenish</button>
-    </form>
-
-    <form method="POST">
-        {% csrf_token %}
-
-        <input type="number" name="coins" step="1" min="1" max="100">
-        <button type="submit" name="reward">Reward</button>
-    </form>
-
-    <img src="{{student.profile_img.url}}" alt="">
-    <h2>{{student.first_name}}</h2>
-    <h2>{{student.last_name}}</h2>
-    <h2>{{student.email}}</h2>
-    <h2>{{student.phone_num}}</h2>
-
-    <h3>{{student_info.balance}}</h3>
-    <h3>{{student_info.xp}}</h3>
-    <h3>{{student_info.coins}}</h3>
-
-    <h1>Groups</h1>
-    {% for group in groups %}
-        <h2>
-            {{group.name}}
-        </h2>
-    {% endfor %}
+        <!-- Groups Card -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-700">
+                <h3 class="font-bold text-white">Enrolled Groups</h3>
+            </div>
+            <div class="p-6">
+                {% if groups %}
+                    <div class="flex flex-wrap gap-2">
+                        {% for group in groups %}
+                        <a href="{% url 'mg-group-detail' group.pk %}">
+                            <span class="bg-indigo-900/30 text-indigo-300 px-3 py-1 rounded-full text-sm font-medium border border-indigo-500/30">{{ group.name }}</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-slate-500 text-sm italic">Not enrolled in any groups.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

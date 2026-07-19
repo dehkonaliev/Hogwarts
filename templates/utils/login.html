@@ -1,7 +1,59 @@
-<h1>Login</h1>
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Edu System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="h-full flex items-center justify-center p-6">
 
-<form method="POST">
-    {% csrf_token %}
-    {{form.as_p}}
-    <button type="submit">Login</button>
-</form>
+    <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-white mb-2">Welcome Back</h1>
+            <p class="text-slate-400">Sign in to your management dashboard</p>
+        </div>
+
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="text-slate-200 text-sm space-y-4 
+                [&>p>label]:block 
+                [&>p>label]:text-xs 
+                [&>p>label]:text-slate-400 
+                [&>p>label]:uppercase 
+                [&>p>label]:font-semibold 
+                [&>p>label]:mb-1 
+                [&>p>input]:w-full 
+                [&>p>input]:bg-slate-950 
+                [&>p>input]:border 
+                [&>p>input]:border-slate-700 
+                [&>p>input]:rounded-lg 
+                [&>p>input]:p-3 
+                [&>p>input]:text-white 
+                [&>p>input]:transition-all 
+                [&>p>input]:focus:ring-2 
+                [&>p>input]:focus:ring-blue-500 
+                [&>p>input]:outline-none">
+                {{ form.as_p }}
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-lg transition-all shadow-lg hover:shadow-blue-500/20">
+                Sign In
+            </button>
+        </form>
+
+        <div class="mt-6 text-center text-sm">
+            <span class="text-slate-400">Don't have an account?</span>
+            <a href="{% url 'signup' %}" class="text-blue-400 font-semibold hover:text-blue-300 ml-1 transition">
+                Sign Up
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -108,6 +108,11 @@ class StudentProfileView(View):
             student_info.coins = student_info.coins + reward
             student_info.save()
             return redirect('mg-student-profile', user.username)
+        
+        if 'promote-to-teacher' in request.POST:
+            user.role = 'TEACHER'
+            user.save()
+            return redirect('mg-teacher-profile', user.username)
             
                 
             

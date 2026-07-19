@@ -1,8 +1,34 @@
-
 {% extends 'mg-base.html' %}
 
 {% block content %}
+<div class="mb-8">
+    <h1 class="text-2xl font-bold text-white mb-2">Dashboard Overview</h1>
+    <p class="text-slate-400">Quick summary of your current system status.</p>
+</div>
 
-<h1>Home page</h1>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Stat Card: Groups -->
+    <a href="{% url 'mg-group-list' %}" class="bg-slate-800 border border-slate-700 p-6 rounded-xl hover:bg-slate-750 transition group">
+        <div class="text-slate-400 text-sm font-semibold mb-2 group-hover:text-indigo-400">Total Groups</div>
+        <div class="text-3xl font-bold text-white">{{ groups_count }}</div>
+    </a>
 
+    <!-- Stat Card: Managers -->
+    <div class="bg-slate-800 border border-slate-700 p-6 rounded-xl">
+        <div class="text-slate-400 text-sm font-semibold mb-2">Managers</div>
+        <div class="text-3xl font-bold text-white">{{ managers_count }}</div>
+    </div>
+
+    <!-- Stat Card: Teachers -->
+    <a href="{% url 'mg-teachers-list' %}" class="bg-slate-800 border border-slate-700 p-6 rounded-xl hover:bg-slate-750 transition group">
+        <div class="text-slate-400 text-sm font-semibold mb-2 group-hover:text-blue-400">Total Teachers</div>
+        <div class="text-3xl font-bold text-white">{{ teachers_count }}</div>
+    </a>
+
+    <!-- Stat Card: Students -->
+    <a href="{% url 'mg-students-list' %}" class="bg-slate-800 border border-slate-700 p-6 rounded-xl hover:bg-slate-750 transition group">
+        <div class="text-slate-400 text-sm font-semibold mb-2 group-hover:text-emerald-400">Total Students</div>
+        <div class="text-3xl font-bold text-white">{{ students_count }}</div>
+    </a>
+</div>
 {% endblock %}
