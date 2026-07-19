@@ -1,0 +1,26 @@
+{% extends 'tr-base.html' %}
+
+{% block content %}
+<h1>Group detail page</h1>
+{{group.name}}
+{{group.students.count}}
+
+<form method="POST" class="space-y-3">
+    {% csrf_token %}
+    <input type="text" name="title" placeholder="Lesson Title ..." minlength="2">
+    <button type="submit" name="lesson">Add Lesson</button>
+
+</form>
+
+<h1>Students</h1>
+{% for student in students %}
+<h1>
+    {{student.first_name}}
+    {{student.last_name}}
+    {{student.email}}
+    {{student.phone_num}}
+</h1>
+    
+{% endfor %}
+
+{% endblock %}

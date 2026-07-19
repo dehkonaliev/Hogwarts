@@ -203,10 +203,10 @@
             <div>
                 <p class="px-3 mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted/70">Edu Process</p>
                 <div class="space-y-0.5">
-                    <a href="{% url 'mg-group-list' %}"
+                    <a href="{% url 'tr-group-list' %}"
                        class="nav-link {% if 'group' in request.resolver_match.url_name %}active bg-raised text-white{% else %}text-slate-300 hover:bg-raised/60 hover:text-white{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition">
                         <svg class="w-[18px] h-[18px] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 5 18.5V20"/><circle cx="9.5" cy="8.5" r="3.5"/><path d="M19 20v-1.5a3.5 3.5 0 0 0-2.5-3.36"/><path d="M14.5 5.13a3.5 3.5 0 0 1 0 6.74"/></svg>
-                        Groups
+                        My Groups
                     </a>
                     <a href="{% url 'mg-students-list' %}"
                        class="nav-link {% if 'student' in request.resolver_match.url_name %}active bg-raised text-white{% else %}text-slate-300 hover:bg-raised/60 hover:text-white{% endif %} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition">

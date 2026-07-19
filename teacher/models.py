@@ -5,7 +5,7 @@ from manager.models import Group
 class Lesson(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    date = models.DateField()
+    date = models.DateTimeField(auto_now_add=True)
     
 class Attendance(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)

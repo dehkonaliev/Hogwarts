@@ -1,0 +1,75 @@
+{% extends 'tr-base.html' %}
+
+{% block title %}Guruhlar{% endblock %}
+
+{% block breadcrumb %}
+<p class="text-xs text-muted mb-0.5">Ta'lim jarayoni</p>
+{% endblock %}
+
+{% block page_title %}Guruhlar{% endblock %}
+
+{% block content %}
+
+<div class="flex items-center justify-between mb-6">
+    <p class="text-sm text-muted">
+        Total <span class="font-mono text-slate-200">{{ groups.count }}</span> groups
+    </p>
+    <button class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-lg bg-accent hover:bg-accent-dim text-white text-sm font-medium transition">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Yangi guruh
+    </button>
+</div>
+
+{% if groups %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for group in groups %}
+    <a href="{% url 'tr-group-detail' group.pk %}">
+        <div class="group relative overflow-hidden rounded-xl border border-line bg-surface hover:border-accent-dim transition p-5">
+            <div class="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent to-gold opacity-0 group-hover:opacity-100 transition"></div>
+
+            <div class="flex items-start justify-between mb-4">
+                <div class="w-10 h-10 rounded-lg bg-raised flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                </div>
+                <span class="text-[11px] font-medium uppercase tracking-wide text-muted/70 mt-1.5">Group</span>
+            </div>
+
+            <h3 class="font-display font-bold text-white text-lg leading-tight mb-3 truncate">{{ group.name }}</h3>
+
+            <div class="flex items-center gap-2 text-sm text-slate-300">
+                <svg class="w-4 h-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 5 18.5V20"/>
+                    <circle cx="9.5" cy="8.5" r="3.5"/>
+                    <path d="M19 20v-1.5a3.5 3.5 0 0 0-2.5-3.36"/>
+                    <path d="M14.5 5.13a3.5 3.5 0 0 1 0 6.74"/>
+                </svg>
+                <span class="font-mono text-slate-200">{{ group.students.count }}</span>
+                <span class="text-muted">students</span>
+            </div>
+        </div>
+    </a>
+    
+    {% endfor %}
+</div>
+
+{% else %}
+<div class="flex flex-col items-center justify-center text-center py-24 px-6 rounded-xl border border-dashed border-line">
+    <div class="w-14 h-14 rounded-full bg-raised flex items-center justify-center mb-4">
+        <svg class="w-6 h-6 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 5 18.5V20"/>
+            <circle cx="9.5" cy="8.5" r="3.5"/>
+        </svg>
+    </div>
+    <h3 class="font-display font-semibold text-white mb-1">Hozircha guruhlar yo'q</h3>
+    <p class="text-sm text-muted max-w-sm">Birinchi guruhni yaratib, o'quvchilarni unga biriktiring.</p>
+    <button class="mt-5 flex items-center gap-2 px-4 py-2 rounded-lg bg-accent hover:bg-accent-dim text-white text-sm font-medium transition">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        Yangi guruh qo'shish
+    </button>
+</div>
+{% endif %}
+
+{% endblock %}
