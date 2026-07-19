@@ -68,6 +68,33 @@ class StudentProfileView(View):
         return render(request, 'manager/mg-student-profile.html', context)
     
     
+@login_required
+def teachers_list(request):
+    access_check = is_manager(request)
+    if access_check:
+        return access_check
+    teachers = CustomUser.objects.filter(role='TEACHER')
+    context = {
+        'teachers': teachers
+    }
+    
+    return render(request, 'manager/teachers.html', context)
+
+
+class TeacherProfileView(View):
+    def get(self, request, username):
+        user = CustomUser.objects.filter(username=username).first()
+        if not user or user.role != 'TEACHER':
+            return redirect('not-found')
+        
+        groups = user.group_teacher.all()
+        context = {
+            'teacher': user,
+            'groups': groups
+        }
+        return render(request, 'manager/mg-teacher-profile.html', context)
+    
+    
     
         
 

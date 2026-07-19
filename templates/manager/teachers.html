@@ -1,0 +1,13 @@
+{% extends 'mg-base.html' %}
+
+{% block content %}
+    <h1>Teachers </h1>
+    {% for teacher in teachers %}
+        <a href="{% url 'mg-teacher-profile' teacher.username %}">
+            <h2>{{teacher.first_name}}</h2>
+            <h2>{{teacher.last_name}}</h2>
+        </a>
+        <h2>{{teacher.email}}</h2>
+        <h2>{{teacher.phone_num}}</h2>
+    {% endfor %}
+{% endblock %}
