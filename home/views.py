@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import LoginForm
+from .forms import LoginForm, SignUpForm
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout
+from .models import CustomUser
 
 @login_required
 def home_page(request):
@@ -33,6 +34,38 @@ class LoginView(View):
                 raise ValidationError("Username or password is incorrect!")
             
         return render(request, 'utils/login.html', {'form': form})
+    
+class SignUpView(View):
+    def get(self, request):
+        form = SignUpForm()
+        return render(request, 'utils/signup.html', {'form': form})
+    
+    
+    def post(self, request):
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            password = form.cleaned_data.get('password')
+            user = form.save(commit=False)
+            user.set_password(password)
+            user.save()
+            login(request, user)
+            return redirect('home')
+            
+            
+        return render(request, 'utils/signup.html', {'form': form})
+    
+
+class UpdateMeView(View):
+    def get(self, request):
+        form = SignUpForm(instance=request.user)
+        return render(request, 'utils/update-me.html', {'form': form})
+
+    def post(self, request):
+        form = SignUpForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+        return render(request, 'utils/update-me.html', {'form': form})
                 
         
             
