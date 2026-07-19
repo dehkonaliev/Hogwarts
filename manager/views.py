@@ -56,16 +56,48 @@ def students_list(request):
 
 class StudentProfileView(View):
     def get(self, request, username):
+        access_check = is_manager(request)
+        if access_check:
+            return access_check
         user = CustomUser.objects.filter(username=username).first()
         if not user or user.role != 'STUDENT':
-            return redirect('not-found')
-        
+            return redirect('not-found')  
+                
         groups = user.enrolled_groups.all()
+        
+        available_groups = Group.objects.exclude(id__in=groups.values_list('id', flat=True))
+        
         context = {
             'student': user,
-            'groups': groups
+            'groups': groups,
+            'available_groups': available_groups
         }
         return render(request, 'manager/mg-student-profile.html', context)
+    
+    def post(self, request, username):
+        group = request.POST.get('group')
+        user = CustomUser.objects.filter(username=username).first()
+        group = Group.objects.get(pk=group)
+        
+        if group:
+            if 'add' in request.POST:
+                group.students.add(user)
+                
+            elif 'remove' in request.POST:
+                group.students.remove(user)
+            
+        groups = user.enrolled_groups.all()
+        
+        available_groups = Group.objects.exclude(id__in=groups.values_list('id', flat=True))
+        
+        
+        context = {
+            'student': user,
+            'groups': groups,
+            'available_groups': available_groups
+        }
+        return render(request, 'manager/mg-student-profile.html', context)
+        
     
     
 @login_required
@@ -102,8 +134,11 @@ class GroupDetailView(LoginRequiredMixin, View):
             return access_check
         
         group = get_object_or_404(Group, pk=pk)
+        
+        students = group.students.all()
         context = {
-            'group': group
+            'group': group,
+            'students': students
         }
         
         return render(request, 'manager/mg-group-detail.html', context)

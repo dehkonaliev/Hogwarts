@@ -2,6 +2,39 @@
 
 {% block content %}
     <h1>Student profile</h1>
+
+    <h2>Add to group</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <select name="group" class="form-select">
+            <option value="" disabled selected>Select a group...</option>
+            {% for group in available_groups %}
+                <option value="{{ group.id }}">{{ group.name }}</option>
+            {% empty %}
+                <option disabled>No groups available</option>
+            {% endfor %}
+        </select>
+
+        <button name="add" type="submit">Add to this group</button>
+    </form>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <select name="group" class="form-select">
+            <option value="" disabled selected>Select a group...</option>
+            {% for group in groups %}
+                <option value="{{ group.id }}">{{ group.name }}</option>
+            {% empty %}
+                <option disabled>No joined groups</option>
+            {% endfor %}
+        </select>
+
+        <button name="remove" type="submit">Remove From this group</button>
+    </form>
+
     <img src="{{student.profile_img.url}}" alt="">
     <h2>{{student.first_name}}</h2>
     <h2>{{student.last_name}}</h2>
@@ -10,6 +43,8 @@
 
     <h1>Groups</h1>
     {% for group in groups %}
-        {{group.name}}
+        <h2>
+            {{group.name}}
+        </h2>
     {% endfor %}
 {% endblock %}

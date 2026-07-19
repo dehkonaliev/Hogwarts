@@ -4,7 +4,24 @@
     <h1>Group Detail Page</h1>
 
     {{group.name}}
-    {{group.teacher}}
-
+    {% if group.teacher %}
+    <h2>
+        <a href="{% url 'mg-teacher-profile' group.teacher.username %}">
+            {{group.teacher}}
+        </a>
+    </h2>
     
+    {% else %}
+        <h2>Group has no teacher</h2>
+    {% endif %}
+    <h2>Group Students</h2>
+    {% for student in students %}
+        <a href="{% url 'mg-student-profile' student.username %}">
+            {{student.username}}
+            {{student.first_name}}
+            {{student.last_name}}
+            {{student.phone_num}}
+
+        </a>
+    {% endfor %}
 {% endblock %}
