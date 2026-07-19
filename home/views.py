@@ -15,6 +15,9 @@ def home_page(request):
 def no_access(request):
     return render(request, 'utils/no-access.html')
 
+def not_found(request):
+    return render(request, 'utils/not-found.html')
+
 class LoginView(View):
     def get(self, request):
         form = LoginForm()
@@ -75,6 +78,11 @@ def my_profile_view(request):
     }
     
     return render(request, 'manager/my-profile.html', context)
+
+@login_required()
+def logout_view(request):
+    logout(request)
+    return redirect('home')
                 
         
             

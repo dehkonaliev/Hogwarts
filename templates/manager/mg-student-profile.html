@@ -1,0 +1,15 @@
+{% extends 'mg-base.html' %}
+
+{% block content %}
+    <h1>Student profile</h1>
+    <img src="{{student.profile_img.url}}" alt="">
+    <h2>{{student.first_name}}</h2>
+    <h2>{{student.last_name}}</h2>
+    <h2>{{student.email}}</h2>
+    <h2>{{student.phone_num}}</h2>
+
+    <h1>Groups</h1>
+    {% for group in groups %}
+        {{group.name}}
+    {% endfor %}
+{% endblock %}

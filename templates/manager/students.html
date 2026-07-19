@@ -1,0 +1,13 @@
+{% extends 'mg-base.html' %}
+
+{% block content %}
+    <h1>Registered students</h1>
+    {% for student in students %}
+        <a href="{% url 'mg-student-profile' student.username %}">
+            <h2>{{student.first_name}}</h2>
+            <h2>{{student.last_name}}</h2>
+        </a>
+        <h2>{{student.email}}</h2>
+        <h2>{{student.phone_num}}</h2>
+    {% endfor %}
+{% endblock %}

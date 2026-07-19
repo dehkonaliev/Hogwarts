@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Group, Payment
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import GroupForm
 from django.db.models import Q
+from home.models import CustomUser
 
 
 def is_manager(request):
@@ -39,6 +40,33 @@ class CreateGroupView(LoginRequiredMixin, View):
         
         groups = Group.objects.all().order_by('-id')
         return render(request, 'manager/group-list.html', {'groups': groups, 'form': form})
+    
+@login_required
+def students_list(request):
+    access_check = is_manager(request)
+    if access_check:
+        return access_check
+    students = CustomUser.objects.filter(role='STUDENT')
+    context = {
+        'students': students
+    }
+    
+    return render(request, 'manager/students.html', context)
+
+
+class StudentProfileView(View):
+    def get(self, request, username):
+        user = CustomUser.objects.filter(username=username).first()
+        if not user or user.role != 'STUDENT':
+            return redirect('not-found')
+        
+        groups = user.enrolled_groups.all()
+        context = {
+            'student': user,
+            'groups': groups
+        }
+        return render(request, 'manager/mg-student-profile.html', context)
+    
     
     
         
