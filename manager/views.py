@@ -95,6 +95,21 @@ class TeacherProfileView(View):
         return render(request, 'manager/mg-teacher-profile.html', context)
     
     
+class GroupDetailView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        access_check = is_manager(request)
+        if access_check:
+            return access_check
+        
+        group = get_object_or_404(Group, pk=pk)
+        context = {
+            'group': group
+        }
+        
+        return render(request, 'manager/mg-group-detail.html', context)
+        
+    
+    
     
         
 

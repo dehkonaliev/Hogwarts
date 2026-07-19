@@ -22,9 +22,17 @@
 <hr>
 
 {% for group in groups %}
-    <h2>{{group.name}}</h2>
+    <a href="{% url 'mg-group-detail' group.pk %}">
+        <h2>{{group.name}}</h2>
+    </a>
 
-    <h2>{{group.teacher}}</h2>
+        {% if group.teacher %}
+            <a href="{% url 'mg-teacher-profile' group.teacher.username %}">
+                <h2>{{group.teacher}}</h2>
+            </a>
+        {% else %}
+            <h2>No teacher</h2>
+        {% endif %}
 {% endfor %}
 
 {% endblock %}
