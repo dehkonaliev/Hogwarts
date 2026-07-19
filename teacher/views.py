@@ -41,7 +41,7 @@ class GroupDetailView(LoginRequiredMixin, View):
             return redirect('no-access')
         
         students = group.students.all()
-        lessons = Lesson.objects.filter(group=group)
+        lessons = Lesson.objects.filter(group=group).order_by('-id')
         context = {
             'group': group,
             'students': students,
@@ -75,13 +75,22 @@ class LessonDetailView(LoginRequiredMixin, View):
         lesson = Lesson.objects.get(pk=pk)
         if lesson.group.teacher != user:
             return redirect('no-access')
+        attendance = Attendance.objects.filter(lesson=lesson)
+        students = lesson.group.students.all().prefetch_related(
+            Prefetch(
+                'has_attend',
+                queryset=attendance,
+                to_attr='student_attendance'
+            )
+        )
         
-        homeworks = Homework.objects.filter(lesson=lesson)
+        homeworks = Homework.objects.filter(lesson=lesson).order_by('-id')
         form = HomeworkForm()
         context = {
             'lesson': lesson,
             'homeworks': homeworks,
-            'form': form
+            'form': form,
+            'students': students
         }
         return render(request, 'teacher/tr-lesson-detail.html', context)
     
@@ -105,6 +114,23 @@ class LessonDetailView(LoginRequiredMixin, View):
             lesson.delete()
             return redirect('tr-group-detail', pk=group_id)
         
+        elif 'mark-attendance' in request.POST:
+            lesson = Lesson.objects.get(pk=pk)
+            
+            present_student_ids = request.POST.getlist('present')
+            
+            Attendance.objects.filter(lesson=lesson).delete()
+            
+            attendance_to_create = [
+                Attendance(lesson=lesson, student_id=student_id, is_present=True)
+                for student_id in present_student_ids
+            ]
+            
+            Attendance.objects.bulk_create(attendance_to_create)
+            
+            return redirect('tr-lesson-detail', pk=pk)
+            
+        
         
 class HomeworkDetailView(LoginRequiredMixin, View):
     def get(self, request, pk):
@@ -114,7 +140,7 @@ class HomeworkDetailView(LoginRequiredMixin, View):
         
         user = request.user
         homework = Homework.objects.get(pk=pk)
-        submissions = StudentSubmit.objects.filter(homework=homework)
+        submissions = StudentSubmit.objects.filter(homework=homework).order_by('-id')
         students = homework.lesson.group.students.all().prefetch_related(
             Prefetch(
                 'studentsubmit_set',

@@ -64,11 +64,12 @@
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-    <!-- Left column: homeworks -->
+    <!-- Left column: homework + attendance -->
     <div class="lg:col-span-2 space-y-6">
+
         <section class="rounded-xl border border-line bg-surface overflow-hidden">
             <div class="flex items-center justify-between px-5 py-4 border-b border-line">
-                <h2 class="font-display font-bold text-white text-base">Uy vazifalari</h2>
+                <h2 class="font-display font-bold text-white text-base">Homework for "{{lesson.title}}"</h2>
                 <span class="text-xs font-mono text-muted">{{ homeworks|length }}</span>
             </div>
 
@@ -106,9 +107,75 @@
                 {% endfor %}
             </ul>
             {% else %}
-            <p class="px-5 py-8 text-sm text-muted text-center">Hali uy vazifasi qo'shilmagan.</p>
+            <p class="px-5 py-8 text-sm text-muted text-center">No homework ... </p>
             {% endif %}
         </section>
+
+        <!-- Attendance -->
+        <section class="rounded-xl border border-line bg-surface overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-line">
+                <h2 class="font-display font-bold text-white text-base">Davomat</h2>
+                <span class="text-xs font-mono text-muted">{{ students|length }}</span>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                {% if students %}
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="text-left text-[11px] uppercase tracking-wide text-muted/70 border-b border-line">
+                            <th class="px-5 py-2.5 font-medium">O'quvchi</th>
+                            <th class="px-5 py-2.5 font-medium text-center w-20">Kelgan</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line/70">
+                        {% for student in students %}
+                        <tr class="hover:bg-raised/50 transition">
+                            <td class="px-5 py-2.5">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-7 h-7 shrink-0 rounded-full bg-gradient-to-br from-accent to-gold flex items-center justify-center text-[11px] font-display font-bold text-white">
+                                        {{ student.first_name|first|upper }}{{ student.last_name|first|upper }}
+                                    </div>
+                                    <span class="text-slate-200 font-medium">{{ student.first_name }} {{ student.last_name }}</span>
+                                </div>
+                            </td>
+                            <td class="px-5 py-2.5">
+                                <label class="flex items-center justify-center gap-2.5 cursor-pointer select-none">
+                                    <!-- Input remains the same -->
+                                    <input type="checkbox" name="present" value="{{ student.pk }}" 
+                                        {% if student.student_attendance %}checked{% endif %} class="peer sr-only">
+
+                                    <!-- Switch Span remains the same -->
+                                    <span class="relative w-6 h-6 shrink-0 rounded-full bg-red-500/20 border border-red-500/30 peer-checked:bg-emerald-500/20 peer-checked:border-emerald-500/40 transition-colors duration-200">
+                                        <span class="absolute top-0.5 left-0.5 w-4.5 h-4.5 rounded-full bg-red-400 peer-checked:bg-emerald-400 peer-checked:translate-x-5 shadow-sm transition-all duration-200"></span>
+                                    </span>
+
+                                    <!-- DYNAMIC TEXT: Shows/Hides based on the checkbox state -->
+                                    <span class="text-xs font-medium text-emerald-400 w-9 text-left hidden peer-checked:block">Present</span>
+                                    <span class="text-xs font-medium text-red-400 w-9 text-left peer-checked:hidden">Absent</span>
+                                </label>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="px-5 py-4 border-t border-line">
+                    <button
+                        type="submit"
+                        name="mark-attendance"
+                        class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-accent hover:bg-accent-dim text-white text-sm font-medium transition">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                        Davomatni saqlash
+                    </button>
+                </div>
+                {% else %}
+                <p class="px-5 py-8 text-sm text-muted text-center">Bu guruhda hali o'quvchi yo'q.</p>
+                {% endif %}
+            </form>
+        </section>
+
     </div>
 
     <!-- Right column: add homework + danger zone -->
@@ -144,7 +211,7 @@
                         <path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                         <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
                     </svg>
-                    Darsni o'chirish
+                    Delete Lesson
                 </button>
             </form>
         </section>

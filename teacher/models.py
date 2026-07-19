@@ -9,7 +9,7 @@ class Lesson(models.Model):
     
 class Attendance(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    student = models.ForeignKey(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'STUDENT'})
+    student = models.ForeignKey(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'STUDENT'}, related_name='has_attend')
     is_present = models.BooleanField(default=False)
     
     class Meta:
