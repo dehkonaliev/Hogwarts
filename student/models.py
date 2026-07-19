@@ -16,7 +16,7 @@ class StudentInfo(models.Model):
     student = models.ForeignKey(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'STUDENT'})
     xp = models.PositiveIntegerField(default=0)
     coins = models.PositiveIntegerField(default=0)
-    balance = models.DecimalField(max_digits=15, decimal_places=2)
+    balance = models.DecimalField(max_digits=15, decimal_places=2, default=0, blank=True)
     
     def __str__(self):
         return self.student.first_name

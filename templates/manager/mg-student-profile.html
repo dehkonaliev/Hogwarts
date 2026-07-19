@@ -19,6 +19,7 @@
 
         <button name="add" type="submit">Add to this group</button>
     </form>
+    
 
     <form method="POST">
         {% csrf_token %}
@@ -35,11 +36,22 @@
         <button name="remove" type="submit">Remove From this group</button>
     </form>
 
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="number" name="amount" step="0.01" min="0" max="1000000">
+        <button type="submit" name="payment">Replenish</button>
+    </form>
+
     <img src="{{student.profile_img.url}}" alt="">
     <h2>{{student.first_name}}</h2>
     <h2>{{student.last_name}}</h2>
     <h2>{{student.email}}</h2>
     <h2>{{student.phone_num}}</h2>
+
+    <h3>{{student_info.balance}}</h3>
+    <h3>{{student_info.xp}}</h3>
+    <h3>{{student_info.coins}}</h3>
 
     <h1>Groups</h1>
     {% for group in groups %}

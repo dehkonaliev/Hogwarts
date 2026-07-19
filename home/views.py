@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout
 from .models import CustomUser
+from student.models import StudentInfo
 
 @login_required
 def home_page(request):
@@ -51,6 +52,7 @@ class SignUpView(View):
             user = form.save(commit=False)
             user.set_password(password)
             user.save()
+            StudentInfo.objects.create(student=user)
             login(request, user)
             return redirect('home')
             

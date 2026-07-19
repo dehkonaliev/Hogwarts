@@ -10,6 +10,11 @@
 
     <h1>Groups</h1>
     {% for group in groups %}
-        {{group.name}}
+        
+        <h2>
+            <a href="{% url 'mg-group-detail' group.pk %}">
+                {{group.name}}
+            </a>
+        </h2>
     {% endfor %}
 {% endblock %}

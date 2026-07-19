@@ -4,8 +4,10 @@ from .models import Group, Payment
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import GroupForm
-from django.db.models import Q
+from django.db.models import Q, F
 from home.models import CustomUser
+from student.models import StudentInfo
+from decimal import Decimal, InvalidOperation
 
 
 def is_manager(request):
@@ -60,6 +62,8 @@ class StudentProfileView(View):
         if access_check:
             return access_check
         user = CustomUser.objects.filter(username=username).first()
+        student_info = StudentInfo.objects.get(student=user)
+        
         if not user or user.role != 'STUDENT':
             return redirect('not-found')  
                 
@@ -70,21 +74,33 @@ class StudentProfileView(View):
         context = {
             'student': user,
             'groups': groups,
-            'available_groups': available_groups
+            'available_groups': available_groups,
+            'student_info': student_info
         }
         return render(request, 'manager/mg-student-profile.html', context)
     
     def post(self, request, username):
-        group = request.POST.get('group')
+        group = request.POST.get('group', None)
         user = CustomUser.objects.filter(username=username).first()
-        group = Group.objects.get(pk=group)
         
         if group:
+            group = Group.objects.get(pk=group)
             if 'add' in request.POST:
                 group.students.add(user)
                 
             elif 'remove' in request.POST:
                 group.students.remove(user)
+        
+        payment = request.POST.get('amount', 0)
+        student_info = StudentInfo.objects.filter(student=user).first()
+        
+        if payment and 'payment' in request.POST:
+            payment = Decimal(payment)
+            student_info.balance = student_info.balance + payment
+            student_info.save()
+            return redirect('mg-student-profile', user.username)
+            
+                
             
         groups = user.enrolled_groups.all()
         
@@ -94,7 +110,8 @@ class StudentProfileView(View):
         context = {
             'student': user,
             'groups': groups,
-            'available_groups': available_groups
+            'available_groups': available_groups,
+            'student_info': student_info
         }
         return render(request, 'manager/mg-student-profile.html', context)
         
@@ -134,11 +151,35 @@ class GroupDetailView(LoginRequiredMixin, View):
             return access_check
         
         group = get_object_or_404(Group, pk=pk)
+        teachers = CustomUser.objects.filter(role='TEACHER')
         
         students = group.students.all()
         context = {
             'group': group,
-            'students': students
+            'students': students,
+            'teachers': teachers
+        }
+        
+        return render(request, 'manager/mg-group-detail.html', context)
+    
+    def post(self, request, pk):
+        access_check = is_manager(request)
+        if access_check:
+            return access_check
+        teachers = CustomUser.objects.filter(role='TEACHER')
+        
+        teacher = teachers.filter(pk=request.POST.get('teacher')).first()
+        group = get_object_or_404(Group, pk=pk)
+        
+        if teacher:
+            group.teacher = teacher
+            group.save()
+        
+        students = group.students.all()
+        context = {
+            'group': group,
+            'students': students,
+            'teachers': teachers
         }
         
         return render(request, 'manager/mg-group-detail.html', context)

@@ -2,8 +2,9 @@
 
 {% block content %}
     <h1>Group Detail Page</h1>
-
-    {{group.name}}
+    <h2>
+        {{group.name}}
+    </h2>
     {% if group.teacher %}
     <h2>
         <a href="{% url 'mg-teacher-profile' group.teacher.username %}">
@@ -14,14 +15,31 @@
     {% else %}
         <h2>Group has no teacher</h2>
     {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <select name="teacher" class="form-select">
+            <option value="" disabled selected>Select a teacher...</option>
+            {% for teacher in teachers %}
+                <option value="{{ teacher.id }}">{{ teacher.first_name }} {{teacher.last_name}}</option>
+            {% empty %}
+                <option disabled>No teachers ...</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Change teacher</button>
+    </form>
     <h2>Group Students</h2>
     {% for student in students %}
-        <a href="{% url 'mg-student-profile' student.username %}">
-            {{student.username}}
-            {{student.first_name}}
-            {{student.last_name}}
-            {{student.phone_num}}
+        <h3>
+            <a href="{% url 'mg-student-profile' student.username %}">
+                {{student.username}}
+                {{student.first_name}}
+                {{student.last_name}}
+                {{student.phone_num}}
 
-        </a>
+            </a>
+        </h3>
+        
     {% endfor %}
 {% endblock %}
