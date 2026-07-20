@@ -8,6 +8,7 @@ from django.contrib.auth import authenticate, login, logout
 from .models import CustomUser
 from manager.models import Group
 from student.models import StudentInfo
+from django.db.models import Count
 
 @login_required
 def home_page(request):
@@ -29,13 +30,26 @@ def home_page(request):
     
     elif user.role == 'TEACHER':
         groups_count = Group.objects.count()
-        teachers_count = CustomUser.objects.filter(role='TEACHER').count()
+        groups = Group.objects.filter(teacher=user).annotate(
+            student_count=Count('students')
+        )
         
         context = {
             'groups_count':groups_count,
+            'groups':groups
         }
         
         return render(request, 'teacher/tr-home.html', context)
+    
+    elif user.role == 'STUDENT':
+        student_info = StudentInfo.objects.get(student=user)
+        
+        context = {
+            'user': user,
+            'student_info': student_info
+        }
+        
+        return render(request, 'student/st-home.html', context)
     
 
 

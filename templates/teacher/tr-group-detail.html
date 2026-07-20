@@ -31,7 +31,7 @@
         <!-- Students -->
         <section class="rounded-xl border border-line bg-surface overflow-hidden">
             <div class="flex items-center justify-between px-5 py-4 border-b border-line">
-                <h2 class="font-display font-bold text-white ">Students</h2>
+                <h2 class="font-display font-bold text-white ">{{group.name}}</h2>
                 <span class="text-xs font-mono text-muted">{{ group.students.count }}</span>
             </div>
 
@@ -52,8 +52,8 @@
                         <tr class="hover:bg-raised/50 transition">
                             <td class="px-5 py-3">
                                 <div class="flex items-center gap-2.5">
-                                    <div class="w-7 h-7 shrink-0 rounded-full bg-gradient-to-br from-accent to-gold flex items-center justify-center text-[11px] font-display font-bold text-white">
-                                        {{ student.first_name|first|upper }}{{ student.last_name|first|upper }}
+                                    <div class="w-7 h-7 shrink-0 rounded-full bg-gradient-to-br from-accent to-gold flex items-center justify-center text-[11px] font-display font-bold text-white overflow-hidden">
+                                        <img src="{{ student.profile_img.url }}" alt="{{ student.first_name }}" class="w-full h-full object-cover">
                                     </div>
                                     <span class="text-slate-200 font-medium">{{ student.first_name }} {{ student.last_name }}</span>
                                 </div>

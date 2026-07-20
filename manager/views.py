@@ -25,7 +25,12 @@ class CreateGroupView(LoginRequiredMixin, View):
         search_query = request.GET.get('group-name', '')
         teacher = request.GET.get('teacher')
         if search_query:
-            groups = groups.filter(Q(name__icontains=search_query) & Q(teacher=teacher))
+            groups = groups.filter(name__icontains=search_query)
+        if teacher:
+            groups = groups.filter(teacher=teacher)
+            
+        
+            
         
         form = GroupForm() 
         return render(request, 'manager/group-list.html', {'groups': groups, 'form': form})

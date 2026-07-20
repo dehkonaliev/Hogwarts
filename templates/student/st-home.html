@@ -1,0 +1,70 @@
+{% extends 'st-base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block breadcrumb %}
+<p class="text-xs text-muted mb-0.5">Overview</p>
+{% endblock %}
+
+{% block page_title %}Home{% endblock %}
+
+{% block content %}
+
+<!-- Profile -->
+<div class="flex items-center gap-4 mb-8">
+    <div class="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-accent to-gold flex items-center justify-center text-[13px] font-display font-bold text-white overflow-hidden">
+        <img src="{{ user.profile_img.url }}" alt="{{ student.first_name }}" class="w-full h-full object-cover">
+    </div>
+    <div class="min-w-0">
+        <h1 class="font-display font-bold text-2xl text-white truncate">
+            Welcome back, {{ user.first_name }}
+        </h1>
+        <p class="text-sm text-muted">
+            @{{ user.username }}
+            {% if user.phone_num %}<span class="mx-1.5">·</span>{{ user.phone_num }}{% endif %}
+        </p>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+    <div class="rounded-xl border border-accent-dim/30 bg-gradient-to-br from-accent/15 to-gold/10 p-5">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-lg bg-raised flex items-center justify-center">
+                <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2l2.6 6.6L22 9.3l-5.3 4.6L18.2 21 12 17.3 5.8 21l1.5-7.1L2 9.3l7.4-.7L12 2z"/>
+                </svg>
+            </div>
+        </div>
+        <p class="text-2xl font-display font-bold text-white font-mono">{{ student_info.xp }}</p>
+        <p class="text-xs text-muted mt-1">XP earned</p>
+    </div>
+
+    <div class="rounded-xl border border-line bg-surface p-5">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-lg bg-raised flex items-center justify-center">
+                <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"/><path d="M12 7v.01"/><path d="M12 16.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9z"/>
+                </svg>
+            </div>
+        </div>
+        <p class="text-2xl font-display font-bold text-white font-mono">{{ student_info.coins }}</p>
+        <p class="text-xs text-muted mt-1">Coins</p>
+    </div>
+
+    <div class="rounded-xl border border-line bg-surface p-5">
+        <div class="flex items-center justify-between mb-3">
+            <div class="w-10 h-10 rounded-lg bg-raised flex items-center justify-center">
+                <svg class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+            </div>
+        </div>
+        <p class="text-2xl font-display font-bold text-white font-mono">${{ student_info.balance }}</p>
+        <p class="text-xs text-muted mt-1">Balance</p>
+    </div>
+
+</div>
+
+{% endblock %}

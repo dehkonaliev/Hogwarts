@@ -1,0 +1,120 @@
+{% extends 'tr-base.html' %}
+
+{% block title %}{{ lesson.title }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Generic styling for {{ form.as_p }} — field names aren't known ahead of time */
+    .styled-form p { margin-bottom: 1rem; }
+    .styled-form label {
+        display: block; font-size: .75rem; font-weight: 500; color: #8B94A8;
+        margin-bottom: .375rem;
+    }
+    .styled-form input[type="text"],
+    .styled-form input[type="number"],
+    .styled-form input[type="date"],
+    .styled-form input[type="datetime-local"],
+    .styled-form input[type="email"],
+    .styled-form input[type="url"],
+    .styled-form select,
+    .styled-form textarea {
+        width: 100%; padding: .625rem .875rem; border-radius: .5rem;
+        background: #182236; border: 1px solid #232E45; color: #E2E8F0; font-size: .875rem;
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .styled-form input::placeholder, .styled-form textarea::placeholder { color: #8B94A8; opacity: .6; }
+    .styled-form input:focus, .styled-form select:focus, .styled-form textarea:focus {
+        outline: none; border-color: #3B4A9E; box-shadow: 0 0 0 3px rgba(91,110,245,.25);
+    }
+    .styled-form input[type="file"] {
+        width: 100%; font-size: .8125rem; color: #8B94A8;
+        padding: .5rem; border-radius: .5rem; border: 1px dashed #232E45; background: #111827;
+    }
+    .styled-form input[type="file"]::file-selector-button {
+        margin-right: .75rem; padding: .4rem .75rem; border-radius: .375rem; border: none;
+        background: #5B6EF5; color: #fff; font-size: .75rem; font-weight: 500; cursor: pointer;
+    }
+    .styled-form textarea { min-height: 6rem; resize: vertical; }
+    .styled-form ul.errorlist { list-style: none; margin: .375rem 0 0; padding: 0; }
+    .styled-form ul.errorlist li { font-size: .75rem; color: #f87171; }
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+<p class="text-xs text-muted mb-0.5">
+    <a href="{% url 'st-group-list' %}" class="hover:text-slate-300 transition">Guruhlar</a>
+    <span class="mx-1">/</span>
+    <a href="{% url 'st-group-detail' lesson.group.pk %}" class="hover:text-slate-300 transition">{{ lesson.group.name }}</a>
+</p>
+{% endblock %}
+
+{% block page_title %}{{ lesson.title }}{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-wrap items-center gap-3 mb-8">
+    <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-line text-sm text-slate-300">
+        <svg class="w-4 h-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 5 18.5V20"/><circle cx="9.5" cy="8.5" r="3.5"/>
+            <path d="M19 20v-1.5a3.5 3.5 0 0 0-2.5-3.36"/><path d="M14.5 5.13a3.5 3.5 0 0 1 0 6.74"/>
+        </svg>
+        {{ lesson.group.name }}
+    </span>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Left column: homework + attendance -->
+    <div class="lg:col-span-2 space-y-6">
+
+        <section class="rounded-xl border border-line bg-surface overflow-hidden">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-line">
+                <h2 class="font-display font-bold text-white text-base">Homework for "{{lesson.title}}"</h2>
+                <span class="text-xs font-mono text-muted">{{ homeworks|length }}</span>
+            </div>
+
+            {% if homeworks %}
+            <ul class="divide-y divide-line/70">
+                {% for homework in homeworks %}
+                <li class="px-5 py-4">
+                    <div class="flex items-start justify-between gap-4">
+                        <a href="{% url 'st-homework-detail' homework.pk %}" class="flex items-center gap-3 min-w-0 group">
+                            <div class="w-8 h-8 shrink-0 rounded-lg bg-raised flex items-center justify-center">
+                                <svg class="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                                </svg>
+                            </div>
+                            <span class="text-slate-200 font-medium truncate group-hover:text-white transition">{{ homework.title }}</span>
+                        </a>
+                    </div>
+
+                    {% if homework.image or homework.file %}
+                    <div class="flex flex-wrap items-center gap-3 mt-3 pl-11">
+                        {% if homework.image %}
+                        <img src="{{ homework.image.url }}" alt="{{ homework.title }}"
+                             class="w-16 h-16 object-cover rounded-lg border border-line">
+                        {% endif %}
+                        {% if homework.file %}
+                        <a href="{{ homework.file.url }}" download
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-raised border border-line hover:border-accent-dim text-xs text-slate-300 hover:text-white transition">
+                            <svg class="w-3.5 h-3.5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/></svg>
+                            Faylni yuklab olish
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="px-5 py-8 text-sm text-muted text-center">No homework ... </p>
+            {% endif %}
+        </section>
+
+        
+    </div>
+
+    
+</div>
+
+{% endblock %}

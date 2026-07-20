@@ -1,0 +1,147 @@
+{% extends 'st-base.html' %}
+
+{% block title %}{{ homework.title }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Generic styling for {{ form.as_p }} — field names aren't known ahead of time */
+    .styled-form p { margin-bottom: 1rem; }
+    .styled-form label {
+        display: block; font-size: .75rem; font-weight: 500; color: #8B94A8;
+        margin-bottom: .375rem;
+    }
+    .styled-form input[type="text"],
+    .styled-form input[type="number"],
+    .styled-form input[type="date"],
+    .styled-form input[type="datetime-local"],
+    .styled-form input[type="email"],
+    .styled-form input[type="url"],
+    .styled-form select,
+    .styled-form textarea {
+        width: 100%; padding: .625rem .875rem; border-radius: .5rem;
+        background: #182236; border: 1px solid #232E45; color: #E2E8F0; font-size: .875rem;
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .styled-form input::placeholder, .styled-form textarea::placeholder { color: #8B94A8; opacity: .6; }
+    .styled-form input:focus, .styled-form select:focus, .styled-form textarea:focus {
+        outline: none; border-color: #3B4A9E; box-shadow: 0 0 0 3px rgba(91,110,245,.25);
+    }
+    .styled-form input[type="file"] {
+        width: 100%; font-size: .8125rem; color: #8B94A8;
+        padding: .5rem; border-radius: .5rem; border: 1px dashed #232E45; background: #111827;
+    }
+    .styled-form input[type="file"]::file-selector-button {
+        margin-right: .75rem; padding: .4rem .75rem; border-radius: .375rem; border: none;
+        background: #5B6EF5; color: #fff; font-size: .75rem; font-weight: 500; cursor: pointer;
+    }
+    .styled-form textarea { min-height: 7rem; resize: vertical; }
+    .styled-form ul.errorlist { list-style: none; margin: .375rem 0 0; padding: 0; }
+    .styled-form ul.errorlist li { font-size: .75rem; color: #f87171; }
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+<p class="text-xs text-muted mb-0.5">Homework</p>
+{% endblock %}
+
+{% block page_title %}{{ homework.title }}{% endblock %}
+
+{% block content %}
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+    <!-- Left column: homework + submission -->
+    <div class="lg:col-span-2 space-y-6">
+
+        <!-- Homework attachment -->
+        {% if homework.image or homework.file %}
+        <section class="rounded-xl border border-line bg-surface p-5">
+            <h2 class="font-display font-bold text-white text-base mb-4">{{homework.title}}</h2>
+
+            {% if homework.image %}
+            <div class="rounded-lg overflow-hidden border border-line mb-4">
+                <img src="{{ homework.image.url }}" alt="{{ homework.title }}" class="w-full max-h-96 object-cover">
+            </div>
+            {% endif %}
+
+            {% if homework.file %}
+            <a href="{{ homework.file }}"
+               class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-lg bg-raised border border-line hover:border-accent-dim text-sm text-slate-200 hover:text-white transition">
+                <svg class="w-4 h-4 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 21h16"/>
+                </svg>
+                Download file
+            </a>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <!-- Submit your answer -->
+        <section class="rounded-xl border border-line bg-surface p-5">
+            <h2 class="font-display font-bold text-white text-base mb-1">Submit your answer</h2>
+            <p class="text-xs text-muted mb-4">Write a message and/or attach a file to turn in your work.</p>
+
+            <form method="POST" enctype="multipart/form-data" class="styled-form">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button
+                    type="submit"
+                    class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-accent hover:bg-accent-dim text-white text-sm font-medium transition">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7Z"/></svg>
+                    Send
+                </button>
+            </form>
+        </section>
+    </div>
+
+    <!-- Right column: assessment -->
+    <div class="lg:col-span-1">
+        <section class="rounded-xl border border-line bg-surface p-5 sticky top-0">
+            <h2 class="font-display font-bold text-white text-base mb-4">Assessment</h2>
+            {% if submission.xp_earned or submission.feedback %}
+
+            <div class="flex items-center gap-3 mb-4 p-3 rounded-lg bg-gradient-to-br from-accent/15 to-gold/10 border border-accent-dim/30">
+                <div class="w-10 h-10 shrink-0 rounded-lg bg-raised flex items-center justify-center">
+                    <svg class="w-5 h-5 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2l2.6 6.6L22 9.3l-5.3 4.6L18.2 21 12 17.3 5.8 21l1.5-7.1L2 9.3l7.4-.7L12 2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-mono font-bold text-white text-xl leading-none">{{ submission.xp_earned }} <span class="text-sm font-sans font-normal text-muted">XP</span></p>
+                    <p class="text-xs text-muted mt-1">Points earned</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <p class="text-xs font-medium text-muted mb-1.5">Feedback</p>
+                {% if submission.feedback %}
+                <p class="text-sm text-slate-300 leading-relaxed whitespace-pre-line">{{ submission.feedback }}</p>
+                {% else %}
+                <p class="text-sm text-muted italic">No feedback left.</p>
+                {% endif %}
+            </div>
+
+            {% else %}
+            <div class="flex items-center gap-2.5 mb-4 p-3 rounded-lg bg-raised border border-line">
+                <svg class="w-4 h-4 text-muted shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                <p class="text-sm text-muted">Waiting to be graded</p>
+            </div>
+            {% endif %}
+
+            {% if homework.lesson.group.teacher %}
+            <div class="flex items-center gap-2.5 pt-4 border-t border-line">
+                <div class="w-7 h-7 shrink-0 rounded-full bg-gradient-to-br from-accent to-gold flex items-center justify-center text-[11px] font-display font-bold text-white">
+                    {{ homework.lesson.group.teacher.first_name|first|upper }}{{ homework.lesson.group.teacher.last_name|first|upper }}
+                </div>
+                <p class="text-xs text-muted">
+                    Checked by
+                    <span class="text-slate-300">{{ homework.lesson.group.teacher.first_name }} {{ homework.lesson.group.teacher.last_name }}</span>
+                </p>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+
+</div>
+
+{% endblock %}

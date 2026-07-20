@@ -20,8 +20,8 @@
             {% for teacher in teachers %}
             <tr class="hover:bg-slate-750 transition-colors">
                 <td class="px-6 py-4 flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-blue-600/20 flex items-center justify-center text-blue-400 font-bold text-xs">
-                        {{ teacher.first_name|slice:":1" }}{{ teacher.last_name|slice:":1" }}
+                    <div class="w-7 h-7 shrink-0 rounded-full bg-gradient-to-br from-accent to-gold flex items-center justify-center text-[11px] font-display font-bold text-white overflow-hidden">
+                        <img src="{{ teacher.profile_img.url }}" alt="{{ student.first_name }}" class="w-full h-full object-cover">
                     </div>
                     <span class="font-medium text-white">{{ teacher.first_name }} {{ teacher.last_name }}</span>
                 </td>

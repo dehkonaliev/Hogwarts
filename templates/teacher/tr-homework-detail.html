@@ -17,7 +17,7 @@
 
         {% if homework.image or homework.file %}
         <section class="rounded-xl border border-line bg-surface p-5">
-            <h2 class="font-display font-bold text-white text-base mb-4">Attachment</h2>
+            <h2 class="font-display font-bold text-white text-base mb-4">{{homework.title}}</h2>
 
             {% if homework.image %}
             <div class="rounded-lg overflow-hidden border border-line mb-4">
